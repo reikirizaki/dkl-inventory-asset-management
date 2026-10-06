@@ -1,0 +1,17 @@
+{
+  "short_name": "DKL Asset",
+  "name": "DKL Inventory & Asset Management - PT Darma Karya Lestari",
+  "icons": [
+    {
+      "src": "/logo-dkl.svg",
+      "type": "image/svg+xml",
+      "sizes": "192x192 512x512"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#f8fafc",
+  "theme_color": "#0284c7",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/"
+}

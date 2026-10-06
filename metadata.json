@@ -1,0 +1,10 @@
+{
+  "name": "DKL Inventory & Asset Management",
+  "description": "Sistem Manajemen Aset & Inventaris Terpadu PT Darma Karya Lestari dengan Barcode/QR, Pelacakan Mutasi, Maintenance, dan Pelaporan Komprehensif.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

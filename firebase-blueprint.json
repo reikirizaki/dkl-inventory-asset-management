@@ -1,0 +1,424 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "User profile with role-based access control and branch scope",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "email": { "type": "string", "maxLength": 256 },
+        "displayName": { "type": "string", "maxLength": 128 },
+        "photoURL": { "type": "string", "maxLength": 1024 },
+        "role": { "type": "string", "enum": ["ADMIN", "USER", "AUDITOR"] },
+        "branch": { "type": "string", "enum": ["SINGARAJA", "TEJAKULA", "ALL"] },
+        "department": { "type": "string", "maxLength": 128 },
+        "phone": { "type": "string", "maxLength": 32 },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["uid", "email", "role", "branch", "isActive"]
+    },
+    "CompanySettings": {
+      "title": "CompanySettings",
+      "description": "Company metadata, corporate branding, and logo settings",
+      "type": "object",
+      "properties": {
+        "companyName": { "type": "string", "maxLength": 256 },
+        "companyAddress": { "type": "string", "maxLength": 512 },
+        "companyPhone": { "type": "string", "maxLength": 64 },
+        "companyEmail": { "type": "string", "maxLength": 128 },
+        "logoUrl": { "type": "string", "maxLength": 1024 },
+        "logoPublicId": { "type": "string", "maxLength": 256 },
+        "primaryColor": { "type": "string", "maxLength": 32 },
+        "secondaryColor": { "type": "string", "maxLength": 32 },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["companyName"]
+    },
+    "Asset": {
+      "title": "Asset",
+      "description": "Fixed asset entity with lifecycle, barcode, and media references",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "barcode": { "type": "string", "maxLength": 128 },
+        "qrCode": { "type": "string", "maxLength": 256 },
+        "name": { "type": "string", "maxLength": 256 },
+        "category": { "type": "string", "maxLength": 128 },
+        "subCategory": { "type": "string", "maxLength": 128 },
+        "brand": { "type": "string", "maxLength": 128 },
+        "model": { "type": "string", "maxLength": 128 },
+        "serialNumber": { "type": "string", "maxLength": 128 },
+        "purchaseDate": { "type": "string", "maxLength": 64 },
+        "purchasePrice": { "type": "number" },
+        "vendor": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 128 },
+        "purchaseOrder": { "type": "string", "maxLength": 128 },
+        "branch": { "type": "string", "enum": ["SINGARAJA", "TEJAKULA"] },
+        "location": { "type": "string", "maxLength": 128 },
+        "department": { "type": "string", "maxLength": 128 },
+        "unit": { "type": "string", "maxLength": 128 },
+        "pic": { "type": "string", "maxLength": 128 },
+        "condition": { "type": "string", "enum": ["BAIK", "RUSAK RINGAN", "RUSAK BERAT", "HILANG"] },
+        "status": { "type": "string", "enum": ["BARU", "AKTIF", "DIPINJAM", "DIKEMBALIKAN", "DIPINDAHKAN", "MAINTENANCE", "RUSAK", "DALAM PERBAIKAN", "SELESAI DIPERBAIKI", "HILANG", "DITEMUKAN KEMBALI", "TIDAK AKTIF", "DILELANG", "DISPOSAL"] },
+        "photoUrl": { "type": "string", "maxLength": 1024 },
+        "photoPublicId": { "type": "string", "maxLength": 256 },
+        "additionalPhotos": { "type": "array" },
+        "description": { "type": "string", "maxLength": 2048 },
+        "notes": { "type": "string", "maxLength": 2048 },
+        "warrantyStart": { "type": "string", "maxLength": 64 },
+        "warrantyEnd": { "type": "string", "maxLength": 64 },
+        "isDeleted": { "type": "boolean" },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["assetCode", "name", "category", "branch", "condition", "status"]
+    },
+    "InventoryItem": {
+      "title": "InventoryItem",
+      "description": "Stock inventory consumable or part item with quantity tracking",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "itemCode": { "type": "string", "maxLength": 128 },
+        "barcode": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "category": { "type": "string", "maxLength": 128 },
+        "unit": { "type": "string", "maxLength": 64 },
+        "minStock": { "type": "number" },
+        "currentStock": { "type": "number" },
+        "purchasePrice": { "type": "number" },
+        "branch": { "type": "string", "enum": ["SINGARAJA", "TEJAKULA", "ALL"] },
+        "location": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "photoUrl": { "type": "string", "maxLength": 1024 },
+        "photoPublicId": { "type": "string", "maxLength": 256 },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["itemCode", "name", "category", "unit", "currentStock", "branch"]
+    },
+    "InventoryTransaction": {
+      "title": "InventoryTransaction",
+      "description": "Log of stock inbound, outbound, return, or adjustment",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "transactionNumber": { "type": "string", "maxLength": 128 },
+        "transactionType": { "type": "string", "enum": ["IN", "OUT", "TRANSFER_IN", "TRANSFER_OUT", "ADJUSTMENT", "DAMAGED", "LOST", "RETURN", "REPAIR"] },
+        "date": { "type": "string", "maxLength": 64 },
+        "itemId": { "type": "string", "maxLength": 128 },
+        "itemName": { "type": "string", "maxLength": 256 },
+        "category": { "type": "string", "maxLength": 128 },
+        "branch": { "type": "string", "maxLength": 64 },
+        "location": { "type": "string", "maxLength": 128 },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "maxLength": 64 },
+        "purchasePrice": { "type": "number" },
+        "totalPrice": { "type": "number" },
+        "vendor": { "type": "string", "maxLength": 128 },
+        "invoiceNumber": { "type": "string", "maxLength": 128 },
+        "documentNumber": { "type": "string", "maxLength": 128 },
+        "receivedBy": { "type": "string", "maxLength": 128 },
+        "recipient": { "type": "string", "maxLength": 128 },
+        "technician": { "type": "string", "maxLength": 128 },
+        "purpose": { "type": "string", "maxLength": 512 },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["transactionNumber", "transactionType", "itemId", "quantity", "branch"]
+    },
+    "AssetTransfer": {
+      "title": "AssetTransfer",
+      "description": "Inter-branch or inter-location asset transfer workflow",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "transferNumber": { "type": "string", "maxLength": 128 },
+        "assetId": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "assetName": { "type": "string", "maxLength": 256 },
+        "fromBranch": { "type": "string", "maxLength": 64 },
+        "toBranch": { "type": "string", "maxLength": 64 },
+        "requestedBy": { "type": "string", "maxLength": 128 },
+        "approvedBy": { "type": "string", "maxLength": 128 },
+        "shippedBy": { "type": "string", "maxLength": 128 },
+        "receivedBy": { "type": "string", "maxLength": 128 },
+        "requestDate": { "type": "string", "maxLength": 64 },
+        "approvalDate": { "type": "string", "maxLength": 64 },
+        "shippingDate": { "type": "string", "maxLength": 64 },
+        "receivedDate": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["DRAFT", "DIAJUKAN", "DISETUJUI", "DITOLAK", "DALAM PENGIRIMAN", "DITERIMA", "DIBATALKAN"] },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["transferNumber", "assetId", "fromBranch", "toBranch", "status"]
+    },
+    "StockOpname": {
+      "title": "StockOpname",
+      "description": "Physical stock count and audit session",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "opnameNumber": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "branch": { "type": "string", "maxLength": 64 },
+        "location": { "type": "string", "maxLength": 128 },
+        "date": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["OPEN", "IN_PROGRESS", "COMPLETED", "CANCELLED"] },
+        "totalAssets": { "type": "number" },
+        "foundCount": { "type": "number" },
+        "notFoundCount": { "type": "number" },
+        "needCheckCount": { "type": "number" },
+        "completionPercentage": { "type": "number" },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "items": { "type": "array" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["opnameNumber", "title", "branch", "status"]
+    },
+    "Maintenance": {
+      "title": "Maintenance",
+      "description": "Routine and preventive maintenance logs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "assetId": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "assetName": { "type": "string", "maxLength": 256 },
+        "maintenanceType": { "type": "string", "maxLength": 128 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "vendor": { "type": "string", "maxLength": 128 },
+        "technician": { "type": "string", "maxLength": 128 },
+        "cost": { "type": "number" },
+        "startDate": { "type": "string", "maxLength": 64 },
+        "endDate": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["OPEN", "IN PROGRESS", "COMPLETED", "CANCELLED"] },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["assetId", "maintenanceType", "status"]
+    },
+    "Repair": {
+      "title": "Repair",
+      "description": "Repair request and execution records for damaged assets",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "repairNumber": { "type": "string", "maxLength": 128 },
+        "assetId": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "assetName": { "type": "string", "maxLength": 256 },
+        "repairDate": { "type": "string", "maxLength": 64 },
+        "problem": { "type": "string", "maxLength": 1024 },
+        "repairAction": { "type": "string", "maxLength": 1024 },
+        "vendor": { "type": "string", "maxLength": 128 },
+        "technician": { "type": "string", "maxLength": 128 },
+        "cost": { "type": "number" },
+        "startDate": { "type": "string", "maxLength": 64 },
+        "finishDate": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["RUSAK", "DIAJUKAN PERBAIKAN", "DALAM PERBAIKAN", "SELESAI DIPERBAIKI", "TIDAK DAPAT DIPERBAIKI"] },
+        "beforePhoto": { "type": "string", "maxLength": 1024 },
+        "beforePhotoPublicId": { "type": "string", "maxLength": 256 },
+        "afterPhoto": { "type": "string", "maxLength": 1024 },
+        "afterPhotoPublicId": { "type": "string", "maxLength": 256 },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["assetId", "problem", "status"]
+    },
+    "Disposal": {
+      "title": "Disposal",
+      "description": "Asset disposal or write-off documentation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "assetId": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "assetName": { "type": "string", "maxLength": 256 },
+        "reason": { "type": "string", "maxLength": 512 },
+        "date": { "type": "string", "maxLength": 64 },
+        "approvedBy": { "type": "string", "maxLength": 128 },
+        "value": { "type": "number" },
+        "method": { "type": "string", "maxLength": 128 },
+        "notes": { "type": "string", "maxLength": 1024 },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["assetId", "reason", "date", "approvedBy"]
+    },
+    "AssetHistory": {
+      "title": "AssetHistory",
+      "description": "Immutable log of all lifecycle events on an asset",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "assetId": { "type": "string", "maxLength": 128 },
+        "assetCode": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 128 },
+        "details": { "type": "string", "maxLength": 2048 },
+        "performedBy": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 256 },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["assetId", "action", "timestamp"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "System-wide tamper-evident append-only audit entries",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 128 },
+        "module": { "type": "string", "maxLength": 128 },
+        "documentId": { "type": "string", "maxLength": 128 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "userEmail": { "type": "string", "maxLength": 256 },
+        "userRole": { "type": "string", "maxLength": 64 },
+        "branch": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string" },
+        "details": { "type": "string", "maxLength": 4096 }
+      },
+      "required": ["action", "module", "userId", "timestamp"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "System notifications for low stock, maintenance, and alerts",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 256 },
+        "message": { "type": "string", "maxLength": 1024 },
+        "link": { "type": "string", "maxLength": 256 },
+        "read": { "type": "boolean" },
+        "targetRole": { "type": "string", "maxLength": 64 },
+        "targetBranch": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["type", "title", "message"]
+    },
+    "MasterDataItem": {
+      "title": "MasterDataItem",
+      "description": "Generic master data record for categories, departments, locations, etc.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "name": { "type": "string", "maxLength": 256 },
+        "code": { "type": "string", "maxLength": 64 },
+        "branch": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 1024 },
+        "status": { "type": "string", "enum": ["ACTIVE", "INACTIVE"] },
+        "createdAt": { "type": "string" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "updatedAt": { "type": "string" },
+        "updatedBy": { "type": "string", "maxLength": 128 }
+      },
+      "required": ["name"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Collection of user accounts with roles and branch access"
+    },
+    "/company_settings/{settingId}": {
+      "schema": "CompanySettings",
+      "description": "Company branding and global corporate parameters"
+    },
+    "/assets/{assetId}": {
+      "schema": "Asset",
+      "description": "Master fixed asset registry with lifecycle details"
+    },
+    "/inventory_items/{itemId}": {
+      "schema": "InventoryItem",
+      "description": "Consumables, parts, and stock inventory master list"
+    },
+    "/inventory_transactions/{txId}": {
+      "schema": "InventoryTransaction",
+      "description": "Stock movements in, out, adjustments, and repairs"
+    },
+    "/asset_transfers/{transferId}": {
+      "schema": "AssetTransfer",
+      "description": "Inter-branch asset transfer requests and executions"
+    },
+    "/stock_opname/{opnameId}": {
+      "schema": "StockOpname",
+      "description": "Stock opname counting and audit records"
+    },
+    "/maintenance/{maintenanceId}": {
+      "schema": "Maintenance",
+      "description": "Maintenance schedule and maintenance logs"
+    },
+    "/repairs/{repairId}": {
+      "schema": "Repair",
+      "description": "Asset repair tickets and before/after photos"
+    },
+    "/disposals/{disposalId}": {
+      "schema": "Disposal",
+      "description": "Asset disposal records"
+    },
+    "/asset_history/{historyId}": {
+      "schema": "AssetHistory",
+      "description": "Audit trail for asset changes"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "System-wide append-only audit trail"
+    },
+    "/notifications/{notificationId}": {
+      "schema": "Notification",
+      "description": "System alerts and user notifications"
+    },
+    "/categories/{categoryId}": {
+      "schema": "MasterDataItem",
+      "description": "Asset and inventory categories"
+    },
+    "/departments/{departmentId}": {
+      "schema": "MasterDataItem",
+      "description": "Company departments"
+    },
+    "/locations/{locationId}": {
+      "schema": "MasterDataItem",
+      "description": "Physical locations in Singaraja and Tejakula"
+    },
+    "/branches/{branchId}": {
+      "schema": "MasterDataItem",
+      "description": "Company branches"
+    },
+    "/pics/{picId}": {
+      "schema": "MasterDataItem",
+      "description": "Person In Charge master"
+    },
+    "/vendors/{vendorId}": {
+      "schema": "MasterDataItem",
+      "description": "Suppliers and service vendors"
+    },
+    "/units/{unitId}": {
+      "schema": "MasterDataItem",
+      "description": "Organizational and operational units"
+    },
+    "/technicians/{technicianId}": {
+      "schema": "MasterDataItem",
+      "description": "Internal and external maintenance technicians"
+    }
+  }
+}

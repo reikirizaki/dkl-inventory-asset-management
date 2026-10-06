@@ -1,0 +1,213 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isInitialAdmin() {
+      return isSignedIn() &&
+        request.auth.token.email != null &&
+        request.auth.token.email.lower() == 'reikirizaki@gmail.com';
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function hasUserDoc() {
+      return exists(/databases/$(database)/documents/users/$(request.auth.uid));
+    }
+
+    function isActiveUser() {
+      return isInitialAdmin() || (
+        isSignedIn() &&
+        hasUserDoc() &&
+        userDoc().isActive == true
+      );
+    }
+
+    function isAdmin() {
+      return isInitialAdmin() || (
+        isActiveUser() &&
+        userDoc().role == 'ADMIN'
+      );
+    }
+
+    function isAuditor() {
+      return !isInitialAdmin() && isActiveUser() && userDoc().role == 'AUDITOR';
+    }
+
+    function isOperationalStaff() {
+      return isAdmin() || (isActiveUser() && userDoc().role == 'USER');
+    }
+
+    // Users Collection
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      // Allow initial admin to bootstrap their own profile or any profile
+      allow create: if (isInitialAdmin() && (request.auth.uid == userId || isAdmin())) || isAdmin();
+      allow update: if isAdmin() || (
+        isActiveUser() &&
+        request.auth.uid == userId &&
+        !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'isActive', 'branch', 'uid', 'email'])
+      );
+      allow delete: if isAdmin() && request.auth.uid != userId;
+    }
+
+    // Company Settings (Logo, Branding, Address) - Readable for login branding & corporate reports
+    match /company_settings/{settingId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Fixed Assets
+    match /assets/{assetId} {
+      allow read: if isSignedIn();
+      allow create: if isOperationalStaff();
+      allow update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Inventory Items (Consumables & Parts)
+    match /inventory_items/{itemId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Inventory Transactions (Inbound, Outbound, Returns)
+    match /inventory_transactions/{txId} {
+      allow read: if isSignedIn();
+      allow create: if isOperationalStaff();
+      allow update, delete: if isAdmin();
+    }
+
+    // Stock Adjustments
+    match /stock_adjustments/{adjId} {
+      allow read: if isSignedIn();
+      allow create: if isOperationalStaff();
+      allow update, delete: if isAdmin();
+    }
+
+    // Asset Transfers
+    match /asset_transfers/{transferId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Asset Mutasi (Internal Location / PIC)
+    match /mutasi/{mutasiId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Stock Opname
+    match /stock_opname/{opnameId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+    match /stock_opnames/{opnameId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Maintenance
+    match /maintenance/{maintId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+    match /maintenances/{maintId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Repairs
+    match /repairs/{repairId} {
+      allow read: if isSignedIn();
+      allow create, update: if isOperationalStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Disposals
+    match /disposals/{disposalId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Asset History (Append-only)
+    match /asset_history/{historyId} {
+      allow read: if isSignedIn();
+      allow create: if isOperationalStaff();
+      allow update, delete: if false;
+    }
+
+    // System Audit Logs (Append-only)
+    match /audit_logs/{logId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // Notifications
+    match /notifications/{notifId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // Master Data Collections
+    match /categories/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /departments/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /locations/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /branches/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /pics/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /vendors/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /units/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+
+    match /technicians/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isOperationalStaff();
+    }
+  }
+}

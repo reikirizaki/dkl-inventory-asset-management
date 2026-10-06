@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+/* In screen mode, print-root is hidden */
+#print-root {
+  display: none;
+}
+
+@media print {
+  /* When printing from printService via printing-mode, hide all regular app DOM completely */
+  body.printing-mode > #root {
+    display: none !important;
+  }
+
+  body.printing-mode #print-root {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    overflow: visible !important;
+  }
+
+  /* Hide app navigation, headers, footers, sidebars, modals and action buttons */
+  header,
+  aside,
+  nav,
+  .print\:hidden,
+  .no-print,
+  button:not(.printable-button) {
+    display: none !important;
+  }
+
+  /* Reset layout constraints for paper printing */
+  html, body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Reset layout viewport locks */
+  main,
+  .h-screen,
+  .overflow-hidden,
+  .overflow-y-auto {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  /* Target report print container */
+  .printable-report {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 6mm !important;
+  }
+
+  /* Ensure tables print properly across pages */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  /* Force display of elements inside #print-root */
+  #print-root, #print-root * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  #print-root .hidden {
+    display: block !important;
+  }
+
+  tr {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  /* Avoid cutting labels or cards */
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  .print-labels-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+    justify-content: flex-start !important;
+    padding: 6mm !important;
+  }
+
+  body.print-landscape {
+    @page {
+      size: landscape;
+      margin: 8mm;
+    }
+  }
+
+  @page {
+    size: auto;
+    margin: 8mm;
+  }
+}

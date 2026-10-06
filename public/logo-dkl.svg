@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#0284c7" />
+      <stop offset="100%" stop-color="#0369a1" />
+    </linearGradient>
+    <linearGradient id="accentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#bae6fd" />
+      <stop offset="100%" stop-color="#7dd3fc" />
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#0369a1" flood-opacity="0.3" />
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#skyGrad)" filter="url(#shadow)" />
+  <g transform="translate(64, 64)">
+    <!-- Isometric Cube / Asset Box -->
+    <path d="M192 48 L320 120 L192 192 L64 120 Z" fill="#ffffff" fill-opacity="0.95" />
+    <path d="M64 120 L192 192 L192 336 L64 264 Z" fill="#e0f2fe" />
+    <path d="M320 120 L192 192 L192 336 L320 264 Z" fill="#bae6fd" />
+    <!-- Barcode lines accent on box side -->
+    <path d="M220 200 L220 280 M236 210 L236 270 M248 215 L248 265 M268 225 L268 255 M284 235 L284 250" stroke="#0284c7" stroke-width="6" stroke-linecap="round" />
+    <!-- DKL Text -->
+    <text x="192" y="340" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" fill="#ffffff" letter-spacing="4">DKL</text>
+  </g>
+</svg>
