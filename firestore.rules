@@ -51,8 +51,8 @@ service cloud.firestore {
     // Users Collection
     match /users/{userId} {
       allow read: if isSignedIn();
-      // Allow initial admin to bootstrap their own profile or any profile
-      allow create: if (isInitialAdmin() && (request.auth.uid == userId || isAdmin())) || isAdmin();
+      // Allow admin or initial admin to create profiles, or signed-in user for their own UID
+      allow create: if isAdmin() || (isSignedIn() && request.auth.uid == userId);
       allow update: if isAdmin() || (
         isActiveUser() &&
         request.auth.uid == userId &&

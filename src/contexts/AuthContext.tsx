@@ -8,10 +8,11 @@ import {
   signOut,
   sendPasswordResetEmail,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { auth, db } from '../firebase/config';
 import { UserProfile, UserRole, BranchScope } from '../types';
 import { logAuditEvent } from '../services/auditService';
+import { reconcileUserProfile } from '../services/userService';
 
 interface AuthContextType {
   user: FirebaseUser | null;
@@ -56,6 +57,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return updated;
       }
       return data;
+    }
+
+    // Attempt reconciliation if document by UID not found (e.g., legacy doc or created before UID sync)
+    if (fbUser.email) {
+      const reconciled = await reconcileUserProfile(fbUser.uid, fbUser.email);
+      if (reconciled) {
+        return reconciled;
+      }
     }
 
     // Closed registration check: only initial superadmin can bootstrap their own profile
@@ -117,18 +126,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, pass: string) => {
     setLoading(true);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    if (!normalizedEmail || !pass) {
+      setLoading(false);
+      throw new Error('Alamat email dan kata sandi wajib diisi.');
+    }
+
     try {
-      const cred = await signInWithEmailAndPassword(auth, email, pass);
+      const cred = await signInWithEmailAndPassword(auth, normalizedEmail, pass);
       const userProfile = await fetchOrCreateProfile(cred.user);
 
       if (!userProfile) {
         await signOut(auth);
-        throw new Error('Akun ini belum terdaftar pada sistem. Silakan hubungi Administrator.');
+        throw new Error('Akun terdaftar di sistem autentikasi, tetapi profil pengguna belum dikonfigurasi oleh Administrator. Silakan hubungi admin.');
       }
 
       if (!userProfile.isActive) {
         await signOut(auth);
-        throw new Error('Akun Anda tidak aktif. Silakan hubungi Administrator.');
+        throw new Error('Akun Anda berstatus NONAKTIF. Silakan hubungi Administrator untuk mengaktifkan kembali akun Anda.');
+      }
+
+      // Record last login timestamp in Firestore
+      try {
+        await updateDoc(doc(db, 'users', cred.user.uid), {
+          lastLoginAt: new Date().toISOString(),
+        });
+        userProfile.lastLoginAt = new Date().toISOString();
+      } catch (e) {
+        // non-blocking
       }
 
       setUser(cred.user);
@@ -146,6 +172,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
     } catch (error: any) {
       console.error('Email login error:', error);
+      // Friendly, non-leaking error messages
+      if (
+        error.code === 'auth/invalid-credential' ||
+        error.code === 'auth/user-not-found' ||
+        error.code === 'auth/wrong-password'
+      ) {
+        throw new Error('Email atau kata sandi tidak sesuai. Silakan periksa kembali.');
+      } else if (error.code === 'auth/user-disabled') {
+        throw new Error('Akun ini telah dinonaktifkan oleh administrator.');
+      } else if (error.code === 'auth/too-many-requests') {
+        throw new Error('Terlalu banyak percobaan masuk yang gagal. Silakan coba kembali beberapa saat lagi.');
+      } else if (error.code === 'auth/network-request-failed') {
+        throw new Error('Koneksi jaringan terputus. Periksa sambungan internet Anda.');
+      }
       throw error;
     } finally {
       setLoading(false);

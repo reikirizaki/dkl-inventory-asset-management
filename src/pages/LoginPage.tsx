@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, AlertCircle, CheckCircle, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle, CheckCircle, ShieldCheck, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import { CompanyLogo } from '../components/common/CompanyLogo';
 import { getCachedCompanySettings, getCompanySettings, subscribeCompanySettings } from '../services/companyService';
@@ -13,6 +13,7 @@ export const LoginPage: React.FC = () => {
   const [companySettings, setCompanySettings] = useState<CompanySettings>(getCachedCompanySettings());
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -34,15 +35,32 @@ export const LoginPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+
+    const emailTrimmed = email.trim();
+    if (!emailTrimmed) {
+      setErrorMsg('Alamat email wajib diisi.');
+      return;
+    }
+    if (!password) {
+      setErrorMsg('Kata sandi wajib diisi.');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
+      await login(emailTrimmed, password);
       navigate('/');
     } catch (err: any) {
-      console.error(err);
-      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+      console.error('Login submit error:', err);
+      if (
+        err.code === 'auth/user-not-found' ||
+        err.code === 'auth/wrong-password' ||
+        err.code === 'auth/invalid-credential'
+      ) {
         setErrorMsg('Email atau password tidak sesuai. Silakan periksa kembali.');
+      } else if (err.code === 'auth/too-many-requests') {
+        setErrorMsg('Terlalu banyak percobaan masuk yang gagal. Silakan tunggu beberapa saat.');
       } else if (err.message) {
         setErrorMsg(err.message);
       } else {
@@ -161,13 +179,21 @@ export const LoginPage: React.FC = () => {
               <div className="relative">
                 <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition"
+                  className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:bg-white transition"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                  title={showPassword ? 'Sembunyikan password' : 'Tampilkan password'}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
               </div>
             </div>
 

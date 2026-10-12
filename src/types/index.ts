@@ -15,6 +15,7 @@ export interface UserProfile {
   createdBy: string;
   updatedAt?: string;
   updatedBy?: string;
+  lastLoginAt?: string;
 }
 
 export interface CompanySettings {
